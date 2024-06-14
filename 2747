@@ -1,0 +1,21 @@
+#define _CRT_SECURE_NO_WARNIGS
+#include<stdio.h>
+int fibo(int n, int M[]);
+int main(void){
+    int n;
+    int M[46] = {0};
+    scanf("%d", &n);
+    printf("%d", fibo(n, M));
+    
+}
+int fibo(int n, int M[]){
+    if(n == 1 || n == 0)
+        return n;
+    if(M[n - 1] == 0){
+        M[n - 1] = fibo(n - 1, M);
+    }
+    if(M[n - 2] == 0){
+        M[n - 2] = fibo(n - 2, M);
+    }
+    return M[n - 1] + M[n - 2];    
+}
