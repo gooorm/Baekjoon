@@ -1,0 +1,79 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+//k번째일 때, x색이 아닌 a, b 색 중 하나 선택하고 다음 집으로 넘어감
+//그 경우 중 수가 작은 경우 선택
+long getMinimum(int** avenue, long** min, int k, int n, int x) {
+	int a, b;
+	long aRet, bRet;
+
+	if (k == n)
+		return 0;
+	
+	switch (x) {
+	case 0:
+		a = 1;
+		b = 2;
+		break;
+	case 1:
+		a = 0;
+		b = 2;
+		break;
+	case 2:
+		a = 0;
+		b = 1;
+		break;
+	}
+	aRet = avenue[k][a] + getMinimum(avenue, min, k + 1, n, a);
+	bRet = avenue[k][b] + getMinimum(avenue, min, k + 1, n, b);
+	if (aRet < bRet)
+		return aRet;
+	else
+		return bRet;
+
+}
+long Min(long a, long b, long c) {
+	if (a < b && a < c)
+		return a;
+	else if (b < a && b < c)
+		return b;
+	else
+		return c;
+}
+
+int main(void) {
+
+	int N;
+	int** avenue;
+	long** min;	
+
+	scanf("%d", &N);
+	avenue = (int**)malloc(sizeof(int*) * N);
+	min = (long**)malloc(sizeof(long*) * (N + 1));
+	for (int i = 0; i < N; i++) {
+		avenue[i] = (int*)malloc(sizeof(int) * 3);
+		min[i] = (long*)malloc(sizeof(long) * 3);
+	}
+	min[N] = (long*)malloc(sizeof(long) * 3);
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < 3; j++) {
+			scanf("%d", &avenue[i][j]);
+			min[i][j] = 0;
+		}
+	}
+	for (int j = 0; j < 3; j++) 
+		min[N][j] = 0;
+	
+
+	printf("%ld", Min(avenue[0][0] + getMinimum(avenue, min, 1, N, 0), 
+					  avenue[0][1] + getMinimum(avenue, min, 1, N, 1), 
+					  avenue[0][2] + getMinimum(avenue, min, 1, N, 2)));
+
+	for (int i = 0; i < N; i++) {
+		free(avenue[i]);
+		free(min[i]);
+	}
+	free(min[N]);
+	free(avenue);
+	free(min);
+}
