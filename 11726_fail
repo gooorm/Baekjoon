@@ -1,0 +1,58 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+long long getComb(int n, int r, long long** C) {
+
+	if (n == r || r == 0)
+		return 1;
+
+	if (C[n - 1][r - 1] == 0) {
+		C[n - 1][r - 1] = getComb(n - 1, r - 1, C);
+	}
+	if (C[n - 1][r] == 0) {
+		C[n - 1][r] = getComb(n - 1, r, C);
+	}
+	return C[n - 1][r - 1] + C[n - 1][r];
+}
+int main(void) {
+
+	int n, k;
+	long long** C, rslt;
+	scanf("%d", &n);
+	k = n / 2;	
+
+	if (n % 2 == 0) {
+		C = (long long**)malloc(sizeof(long long*) * (k + 2));
+		for (int i = 0; i <= k + 1; i++)
+			C[i] = (long long*)malloc(sizeof(long long) * (k + 1));
+		for (int i = 0; i <= k + 1; i++)
+			for (int j = 0; j <= k; j++)
+				C[i][j] = 0;
+		rslt = getComb(k + 1, k, C);
+
+		for (int i = 0; i <= (k + 1); i++)
+			free(C[i]);
+	}
+	
+	else {
+		C = (long long**)malloc(sizeof(long long*) * (n + 2));
+		for (int i = 0; i <= n + 1; i++)
+			C[i] = (long long*)malloc(sizeof(long long) * (k + 1));
+		for (int i = 0; i <= n + 1; i++)
+			for (int j = 0; j <= k; j++)
+				C[i][j] = 0;
+
+		rslt = 0;
+		for (int i = 0; i <= k; i++) {
+			rslt += getComb(n - i, i, C);
+			if (rslt >= 10007)
+				rslt %= 10007;
+		}
+
+		for (int i = 0; i <= (n + 1); i++)
+			free(C[i]);
+	}
+	printf("%lld", rslt % 10007);
+	
+	free(C);
+}
