@@ -1,0 +1,36 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+
+void compute_prefix_sum(int* array, int* prefix_sum, int size) {
+	prefix_sum[0] = 0;
+	for (int i = 1; i <= size; i++) {
+		prefix_sum[i] = prefix_sum[i - 1] + array[i];
+	}
+}
+int range_sum(int* prefix_sum, int i, int j) {
+    return prefix_sum[j] - prefix_sum[i - 1];
+}
+int main(void) {
+	int N, M, i, j, sum[1] = {0};
+    int* arr;
+    int* prefix_sum;
+
+    scanf("%d%d", &N, &M);
+    arr = (int*)malloc(sizeof(int) * (N + 1));
+    prefix_sum = (int*)malloc(sizeof(int) * (N + 1));
+
+    for (int i = 1; i <= N; i++) 
+        scanf("%d", &arr[i]);
+    
+    compute_prefix_sum(arr, prefix_sum, N);
+    for (int k = 0; k < M; k++) {
+        scanf("%d%d", &i, &j);
+        printf("%d\n", range_sum(prefix_sum, i, j));
+    }
+
+    free(arr);
+    free(prefix_sum);
+
+    return 0;
+}
