@@ -1,0 +1,64 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include<stdio.h>
+#include<stdlib.h>
+
+int toTheOne(int n, int number, int M[], int* trace, int tc, int ok) {
+	int min, next = n - 1;
+	if (n == 1) {
+		return 0;
+	}
+
+	if (M[next] == 0)
+		M[next] = toTheOne(next, number, M, trace, tc + 1, 0);
+	min = M[next];
+	if (n % 2 == 0) {
+		if (M[n / 2] == 0) {
+			M[n / 2] = toTheOne(n / 2, number, M, trace, tc + 1, 0);
+		}
+		if (min > M[n / 2]) {
+			min = M[n / 2];
+			next = n / 2;
+		}
+	}
+	if (n % 3 == 0) {
+		if (M[n / 3] == 0) {
+			M[n / 3] = toTheOne(n / 3, number, M, trace, tc + 1, 0);
+		}
+		if (min > M[n / 3]) {
+			min = M[n / 3];
+			next = n / 3;
+		}
+	}	
+
+	if (n == number) {
+		ok = 1;		
+	}
+	if (ok == 1) {
+		trace[tc] = next;
+		toTheOne(next, number, M, trace, tc + 1, ok); // ok = 1, min루트를 trace		
+	}
+	return min + 1;
+}
+int main(void) {
+	int N; 
+	int* M;
+	int* trace, tCount;
+	scanf("%d", &N);
+	M = (int*)malloc(sizeof(int) * (N + 1));
+	trace = (int*)malloc(sizeof(int) * (N + 1));
+	for (int i = 1; i <= N; i++) {
+		M[i] = 0;
+	}
+	trace[0] = N;
+	tCount = toTheOne(N, N, M, trace, 1, 0);
+	printf("%d\n", tCount);
+	trace[tCount] = 1;
+
+	for (int i = 0; i <= tCount; i++) {
+		printf("%d ", trace[i]);
+	}
+
+	free(M);
+	free(trace);
+}
