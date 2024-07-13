@@ -24,16 +24,16 @@ int fibonacci(int n, int** M, int x) {
 }
 int main(void) {
 
-    int n, input, zeroCount[1] = {0}, oneCount[1] = { 0 };
+    int n, input;
     int** M;
 
     scanf("%d", &n);
-    M = (int**)malloc(sizeof(int*) * (n + 1));
+    M = (int**)malloc(sizeof(int*) * 101);
 
-    for(int i = 0; i <= n; i++)
+    for(int i = 0; i <= 100; i++)
         M[i] = (int*)malloc(sizeof(int) * 2);
 
-    for (int i = 0; i <= n; i++)
+    for (int i = 0; i <= 100; i++)
         for (int j = 0; j < 2; j++)
             M[i][j] = -1;
 
