@@ -1,0 +1,46 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include<stdio.h>
+#include<stdlib.h>
+int earnALot(int* T, int* P, int* max_earn, int day, int n) {
+	int max = 0, tmp;
+	
+	
+	for (int i = 0; (i < T[day]) && (day + i < n); i++) {
+		if (day + i + T[day + i] > n)
+			continue;
+		if (day + i + T[day + i] >= n)
+			tmp = P[day + i];
+		else {
+			if (max_earn[day + i + T[day + i]] == 0) {
+				max_earn[day + i + T[day + i]] = earnALot(T, P, max_earn, day + i + T[day + i], n);
+			}
+
+			tmp = max_earn[day + i + T[day + i]] + P[day + i];
+		}
+		if (tmp > max)
+			max = tmp;
+	}
+	
+	return max;
+}
+int main(void){
+	int N, * T, * P, *D_DAY;
+
+	scanf("%d", &N);
+
+	T = (int*)malloc(sizeof(int) * N);
+	P = (int*)malloc(sizeof(int) * N);
+	D_DAY = (int*)malloc(sizeof(int) * N);
+
+	for (int i = 0; i < N; i++) {
+		scanf("%d%d", &T[i], &P[i]);
+		D_DAY[i] = 0;
+	}
+
+	printf("%d", earnALot(T, P, D_DAY, 0, N));
+
+	free(T);
+	free(P);
+	free(D_DAY);
+}
