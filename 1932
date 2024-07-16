@@ -1,0 +1,58 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include<stdio.h>
+#include<stdlib.h>
+int getMaxTriangle(int x, int y, int n, int** triangle, int** M) {
+	int left, right = 0;
+
+	if (x == n)
+		return 0;
+
+	if (M[x + 1][y] == -1) 
+		M[x + 1][y] = getMaxTriangle(x + 1, y, n, triangle, M);
+	left = M[x + 1][y] + triangle[x][y];
+	
+	if (y <= x) {
+		if (M[x + 1][y + 1] == -1)
+			M[x + 1][y + 1] = getMaxTriangle(x + 1, y + 1, n, triangle, M);
+		right = M[x + 1][y + 1] + triangle[x][y];
+	}
+
+	if (left > right)
+		return left;
+	else
+		return right;
+}
+
+
+int main(void) {
+	int n;
+	int** triangle, ** M;
+	
+	scanf("%d", &n);
+
+	triangle = (int**)malloc(sizeof(int*) * (n + 1));
+	M = (int**)malloc(sizeof(int*) * (n + 1));
+
+	for (int i = 0; i <= n; i++) {
+		triangle[i] = (int*)malloc(sizeof(int) * (i + 1));
+		M[i] = (int*)malloc(sizeof(int) * (i + 1));
+	}
+	for (int i = 0; i < n; i++) 
+		for (int j = 0; j <= i; j++) 
+			scanf("%d", &triangle[i][j]);
+		
+	for (int i = 0; i <= n; i++) 
+		for (int j = 0; j <= i; j++) 
+			M[i][j] = -1;
+	
+
+	printf("%d", getMaxTriangle(0, 0, n, triangle, M));
+
+	for (int i = 0; i <= n; i++) {
+		free(triangle[i]);
+		free(M[i]);
+	}
+	free(triangle);
+	free(M);
+}
