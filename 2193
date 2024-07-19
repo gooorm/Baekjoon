@@ -1,0 +1,44 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+long long getPinaryNumber(int N, int x, int now, long long** pinary) {
+
+	if (x == N)
+		return 0;
+
+	if (pinary[x + 1][0] == 0)
+		pinary[x + 1][0] = getPinaryNumber(N, x + 1, 0, pinary);
+	if (now == 0) {
+		if (pinary[x + 1][1] == 0)
+			pinary[x + 1][1] = getPinaryNumber(N, x + 1, 1, pinary);
+		return pinary[x + 1][1] + pinary[x + 1][0];
+	}
+	return pinary[x + 1][0];
+}
+
+int main(void) {
+	int N;
+	long long** pinary;
+
+	scanf("%d", &N);
+	pinary = (long long**)malloc(sizeof(long long*) * (N + 1));
+
+	for (int i = 0; i <= N; i++) 
+		pinary[i] = (long long*)malloc(sizeof(long long) * 2);
+	for (int i = 0; i <= N; i++)
+		for (int j = 0; j < 2; j++)
+			pinary[i][j] = 0;
+	for (int i = 0; i < 2; i++)
+		pinary[N - 1][i] = 1;
+
+	if (N > 1)
+		printf("%lld", getPinaryNumber(N, 0, 1, pinary));
+	else
+		printf("%d", pinary[0][1]);
+
+	for (int i = 0; i <= N; i++)
+		free(pinary[i]);
+
+	free(pinary);
+}
