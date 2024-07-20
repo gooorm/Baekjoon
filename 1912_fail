@@ -1,0 +1,109 @@
+//두 가지 방법으로 실패함
+// case 1: 미들 기준으로 왼쪽, 미들 포함, 오른쪽으로 구간을 쪼개 최대 연속합 구하기 
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+//i to j까지 가장 합이 큰 수열의 합 반환
+int right_sum(int i, int j, int* arr) {
+	if (i >= j)
+		return arr[i];
+	int max = 0, next;
+	for (int k = i; k <= j; k++) {
+		max += arr[k];
+	}
+	next = right_sum(i, j - 1, arr);
+	return (max > next) ? max : next;
+}
+int left_sum(int i, int j, int* arr) {
+	if (i >= j)
+		return arr[i];
+	int max = 0, next;
+	for (int k = i; k <= j; k++) {
+		max += arr[k];
+	}
+	next = left_sum(i + 1, j, arr);
+	return (max > next) ? max : next;
+}
+int max_arr(int size, int* arr) {
+	int left, right, midL, midR, max = -1000;
+	int mid = size / 2;
+	for (int i = 0; i < mid; i++) {
+		left = left_sum(0, i, arr);
+		max = (left > max) ? left : max;
+	}
+	left = max; // 왼쪽 max값 세이브
+	for (int i = mid + 1; i < size; i++) {
+		right = right_sum(i, size - 1, arr);
+		max = (right > max) ? right : max;
+	}
+	right = max; // 왼쪽 max 혹은 오른쪽이 더 크다면 오른쪽의 max 세이브
+	midR = right_sum(mid, size - 1, arr);
+	midL = left_sum(0, mid, arr);
+	midL = midL + midR - arr[mid]; // mid의 max값을 저장
+	
+	return (right > midL) ? right : midL;
+}
+
+int main(void) {
+	int* arr;
+	int n;
+	scanf("%d", &n);
+	arr = (int*)malloc(sizeof(int) * n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &arr[i]);
+	printf("%d", max_arr(n, arr));
+}
+------------------------------------------------------------------------------------------------------------------
+//case 2: 구간합을 미리 구한 후 구간합과의 계산으로 연속합 구하기 
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+//i to j까지 가장 합이 큰 수열의 합 반환
+void get_sum(int size, int* arr, int* sumArr) {
+	sumArr[0] = arr[0];
+	for (int i = 1; i < size; i++) 
+		sumArr[i] = sumArr[i - 1] + arr[i];	
+}
+int getMaxArr(int* sumArr, int size, int i, int j) {
+	int ret, nextRet;
+	if (j >= size - 1) {
+		if (i == 0)
+			return sumArr[size - 1];
+		return sumArr[size - 1] - sumArr[i - 1];
+	}
+	if (i == 0)
+		ret = sumArr[j];
+	else
+		ret = sumArr[j] - sumArr[i - 1];
+	nextRet = getMaxArr(sumArr, size, i, j + 1);
+
+	if (ret > nextRet)
+		return ret;
+	return nextRet;
+}
+int max_arr(int size, int* sumArr) {
+	int ret, max;
+
+	max = getMaxArr(sumArr, size, 0, 0);
+	for (int i = 1; i < size - 2; i++) {
+		ret = getMaxArr(sumArr, size, i, i);
+		if (max < ret)
+			max = ret;
+	}
+	return max;
+}
+
+int main(void) {
+	int* arr, * sumArr;
+	int n;
+	scanf("%d", &n);
+	arr = (int*)malloc(sizeof(int) * n);
+	sumArr = (int*)malloc(sizeof(int) * n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &arr[i]);
+	get_sum(n, arr, sumArr);
+	printf("%d", max_arr(n, sumArr));
+
+	free(arr);
+	free(sumArr);
+}
