@@ -1,0 +1,57 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+int getMaxPlum(int T, int time, int hp, int* tree, int now, int** M) {
+	int ret;
+	if (T == time) 
+		return 0;	
+
+	if (M[time + 1][hp] == 0)
+			M[time + 1][hp] = getMaxPlum(T, time + 1, hp, tree, now, M);
+	
+	if (hp > 0) {
+		if (now == 1 && M[time + 1][hp - 1] == 0)
+			M[time + 1][hp - 1] = getMaxPlum(T, time + 1, hp - 1, tree, 2, M);
+
+		if (now == 2 && M[time + 1][hp - 1] == 0)
+			M[time + 1][hp - 1] = getMaxPlum(T, time + 1, hp - 1, tree, 1, M);
+
+		ret = (M[time + 1][hp] > M[time + 1][hp - 1]) ? M[time + 1][hp] : M[time + 1][hp - 1];
+	}
+	else
+		ret = M[time + 1][hp];
+	if (now == tree[time] && time >= 0) 
+		return ret + 1;
+	return ret;
+}
+
+int main(void) {
+
+	int T, W;
+	int* tree;
+	int** M;
+
+	scanf("%d%d", &T, &W);
+	tree = (int*)malloc(sizeof(int) * T);
+	M = (int**)malloc(sizeof(int*) * (T + 1));
+
+	for (int i = 0; i < T; i++) 
+		scanf("%d", &tree[i]);		
+
+	for (int i = 0; i <= T; i++)
+		M[i] = (int*)malloc(sizeof(int) * (W + 1));
+
+	for (int i = 0; i <= T; i++) 
+		for (int j = 0; j <= W; j++)
+			M[i][j] = 0;
+	
+	printf("%d", getMaxPlum(T, -1, W, tree, 1, M));
+
+
+	for (int i = 0; i <= T; i++)
+		free(M[i]);
+	free(M);
+	free(tree);
+	return 0;
+}
