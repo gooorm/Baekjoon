@@ -1,0 +1,42 @@
+import java.util.Stack;
+import java.util.Scanner;
+public class Main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		Stack<Character> arr = new Stack<>();
+		String array = sc.next();
+		String bomb = sc.next();
+		int bombLength = bomb.length();
+		for(char i: array.toCharArray()) {
+			arr.push(i);
+			if(arr.size() >= bombLength) {
+				boolean isbomb = true;
+				for(int j = 0; j < bombLength; j++) {
+					if(arr.get(arr.size() - 1 - j) != bomb.charAt(bombLength - 1 - j)) {
+						isbomb = false;
+						break;
+					}
+				}
+				if(isbomb) {
+					for(int j = 0; j < bombLength; j++) {
+						arr.pop();
+					}
+				}
+			}
+		}
+		if (arr.isEmpty()) {
+            System.out.println("FRULA");
+        } else {
+            StringBuilder rslt = new StringBuilder();
+            while (!arr.isEmpty()) {
+            	rslt.append(arr.pop());
+            }
+            System.out.println(rslt.reverse().toString());
+        }
+		
+		sc.close();
+	}
+
+}
