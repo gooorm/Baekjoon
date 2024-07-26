@@ -1,0 +1,27 @@
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Scanner;
+public class Main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Queue<Integer> que = new LinkedList<>();
+		Scanner sc = new Scanner(System.in);
+		
+		int n = sc.nextInt();
+		
+		for(int i = 1; i <= n; i++) {
+			que.add(i);
+		}
+		while(que.size() > 1) {
+			que.remove();
+			if(que.size() == 1)
+				break;
+			que.add(que.remove());
+		}
+		
+		System.out.println(que.peek());
+		sc.close();
+	}
+
+}
