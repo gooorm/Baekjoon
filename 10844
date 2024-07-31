@@ -1,0 +1,63 @@
+#include <iostream>
+
+using namespace std;
+
+int stairNum(int count, int n, int** M) {
+	if (count == 1) {
+		return 1;
+	}
+	if (n == 9) {
+		if (M[8][count - 1] == 0)
+			M[8][count - 1] = stairNum(count - 1, 8, M);
+		return M[8][count - 1];
+	}
+	if (n == 0) {
+		if (M[1][count - 1] == 0)
+			M[1][count - 1] = stairNum(count - 1, 1, M);
+		return M[1][count - 1];
+	}
+	int ret;
+
+	if(M[n - 1][count - 1] == 0)
+		if (M[n - 1][count - 1] == 0)
+			M[n - 1][count - 1] = stairNum(count - 1, n - 1, M);
+	if (M[n + 1][count - 1] == 0)
+		if (M[n + 1][count - 1] == 0)
+			M[n + 1][count - 1] = stairNum(count - 1, n + 1, M);
+	ret = M[n - 1][count - 1] + M[n + 1][count - 1];
+	if (ret >= 1000000000)
+		ret %= 1000000000;
+	return ret;
+}
+
+
+int main(void) {
+
+	int n;
+	cin >> n;
+	int** M = new int*[10];
+	
+	for (int i = 0; i < 10; i++) {
+		M[i] = new int[n + 1];
+	}
+
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j <= n; j++) {
+			M[i][j] = 0;
+		}
+	}
+	int rslt = 0;
+	for (int i = 1; i < 10; i++) {
+		rslt += stairNum(n, i, M);
+		if (rslt >= 1000000000)
+			rslt %= 1000000000;
+	}
+	cout << rslt;
+
+	for (int i = 0; i < 10; i++) {
+		delete M[i];
+	}
+	delete[] M;
+
+	return 0;
+}
