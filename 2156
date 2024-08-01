@@ -1,0 +1,67 @@
+#include <iostream>
+
+using namespace std;
+
+int drinkWine(int* wine, int** dp, int n, int now, int sequence) {
+	if (now == n) {
+		return 0;
+	}
+
+	//pass or drink............sequence 2: drink// sequence 1: pass 
+	int case1, case2;
+	switch (sequence) {
+	case 0:
+		if (dp[now + 1][0] == -1)
+			dp[now + 1][0] = drinkWine(wine, dp, n, now + 1, 0);
+		if (dp[now + 1][1] == -1)
+			dp[now + 1][1] = drinkWine(wine, dp, n, now + 1, 1);
+		case1 = dp[now + 1][0];
+		case2 = dp[now + 1][1];
+		break;
+	case 1:
+		if (dp[now + 1][0] == -1)
+			dp[now + 1][0] = drinkWine(wine, dp, n, now + 1, 0);
+		if (dp[now + 1][2] == -1)
+			dp[now + 1][2] = drinkWine(wine, dp, n, now + 1, 2);
+		case1 = dp[now + 1][0] + wine[now];
+		case2 = dp[now + 1][2] + wine[now];
+		break;
+	case 2:
+		if (dp[now + 1][0] == -1)
+			dp[now + 1][0] = drinkWine(wine, dp, n, now + 1, 0);
+		return dp[now + 1][0] + wine[now];
+	}
+	
+	return (case1 > case2) ? case1 : case2;
+
+}
+
+int main(void) {
+
+	int n;
+	cin >> n;
+
+	int* wine = new int[n];
+	int** dp = new int*[n + 1];
+
+	for (int i = 0; i <= n; i++) 
+		dp[i] = new int[3];	
+	for (int i = 0; i < n; i++)
+		cin >> wine[i];
+	for (int i = 0; i <= n; i++)
+		for (int j = 0; j < 3; j++)
+			dp[i][j] = -1;
+	
+	int case1 = drinkWine(wine, dp, n, 0, 1);
+	int case0 = drinkWine(wine, dp, n, 0, 0);
+	if (case1 > case0)
+		cout << case1;
+	else
+		cout << case0;
+
+	delete wine;
+	for (int i = 0; i <= n; i++)
+		delete dp[i];
+	delete dp;
+	return 0;
+}
