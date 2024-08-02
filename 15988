@@ -1,0 +1,34 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+public class Main {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ArrayList<Integer> sum = new ArrayList<Integer>();
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+		
+		sum.add(1);
+		sum.add(2);
+		sum.add(4);
+		sum.add(7);
+		for(int i = 0; i < n; i++) {
+			int num = sc.nextInt();
+			if(num > 4) {
+				for(int j = 4; j < num; j++) {
+					if(sum.size() <= j) {
+						sum.add((sum.get(j - 1) * 2 - sum.get(j - 4))
+								%1000000009);						
+					}
+					if(sum.get(j) < 0) {
+						while(sum.get(j) < 0) {
+							sum.set(j, sum.get(j) + 1000000009);
+						}
+					}
+				}
+			}
+			System.out.println(sum.get(num - 1));			
+		}
+		sc.close();
+	}
+}
