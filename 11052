@@ -1,0 +1,30 @@
+#include <iostream>
+using namespace std;
+
+int main(void) {
+	int N;
+	cin >> N;
+	int* card = new int[N + 1];
+	int* dp = new int[N + 1];
+
+	for (int i = 0; i <= N; i++) {
+		if (i == 0)
+			card[0] = 0;
+		else
+			cin >> card[i];
+		dp[i] = card[i];
+	}  
+	for (int i = 1; i <= N; i++) {
+		int max = card[i];
+		int tmp= card[i];
+		for (int j = 1; j <= i; j++) {
+			dp[i] = dp[j] * (i / j) + dp[i % j];
+			if (dp[i] > max)
+				max = dp[i];
+		}
+		dp[i] = max;
+	}
+	cout << dp[N];
+	delete card;
+	delete dp;
+}
