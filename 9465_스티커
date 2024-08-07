@@ -1,0 +1,60 @@
+#include <iostream>
+using namespace std;
+int pickSticker(int** sticker, int** dp, int i, int j, int N) {
+	if (j == N || i == 2) {
+		return 0;
+	}
+	if (i == -1) {
+		int caseupper = pickSticker(sticker, dp, 0, 0, N);
+		int caselower = pickSticker(sticker, dp, 1, 0, N);
+		return (caseupper > caselower) ? caseupper : caselower;
+	}
+	int max;
+	if (dp[(i + 1) % 2][j + 1] == -1) 
+		dp[(i + 1) % 2][j + 1] = pickSticker(sticker, dp, (i + 1) % 2, j + 1, N);	
+	max = dp[(i + 1) % 2][j + 1];
+
+	if (j + 2 <= N) {
+		if (dp[i][j + 2] == -1)
+			dp[i][j + 2] = pickSticker(sticker, dp, i, j + 2, N);
+		if (max < dp[i][j + 2])
+			max = dp[i][j + 2];
+		if (dp[(i + 1) % 2][j + 2] == -1)
+			dp[(i + 1) % 2][j + 2] = pickSticker(sticker, dp, (i + 1) % 2, j + 2, N);
+		if (max < dp[(i + 1) % 2][j + 2])
+			max = dp[(i + 1) % 2][j + 2];
+	}
+
+	return max + sticker[i][j];
+}
+
+int main(void) {
+	int n;
+	cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		int N;
+		cin >> N;
+		int** sticker = new int* [2];
+		int** dp = new int* [2];
+		for (int i = 0; i < 2; i++) {
+			sticker[i] = new int[N];
+			dp[i] = new int[N + 1];
+		}
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < N; j++) {
+				cin >> sticker[i][j];
+				dp[i][j] = -1;
+			}
+		dp[0][N] = -1; dp[1][N] = -1;
+		
+		cout << pickSticker(sticker, dp, -1, -1, N) << endl;
+
+		for (int i = 0; i < 2; i++) {
+			delete sticker[i];
+			delete dp[i];
+		}		
+		delete sticker; delete dp;
+	}
+	return 0;
+}
