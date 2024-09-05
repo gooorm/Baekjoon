@@ -1,0 +1,56 @@
+#include <iostream>
+using namespace std;
+
+int main(void) {
+
+	int n, sign;
+	int ret;
+	cin >> n;
+	
+	if (n == 0 || n == 1) {
+		sign = n;
+		ret = n;
+	}
+	else if (n > 1) {
+		int* M = new int[n + 1];
+		M[0] = 0;
+		M[1] = 1;
+		for (int i = 2; i <= n; i++) {
+			M[i] = M[i - 1] + M[i - 2];
+			if (M[i] >= 1000000000)
+				M[i] %= 1000000000;
+		}
+		ret = M[n];
+		if (ret == 0)
+			sign = 0;
+		else
+			sign = 1;
+		delete[] M;
+	}
+	else {
+		n = -n;
+		int* M = new int[n + 1];
+		M[0] = 0;
+		M[1] = 1;
+		if (n > 1) {
+			for (int i = 2; i <= n; i++) {
+				M[i] = M[i - 2] - M[i - 1];
+				if (M[i] >= 1000000000 || M[i] <= -1000000000)
+					M[i] %= 1000000000;
+			}
+		}
+		ret = M[n];
+		if (ret < 0) {
+			sign = -1;
+			ret = -ret;
+		}
+		else if (ret == 0)
+			sign = 0;
+		else
+			sign = 1;
+		delete[] M;
+	}
+	cout << sign << endl << ret;
+	
+	return 0;
+}
