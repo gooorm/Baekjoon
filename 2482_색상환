@@ -1,0 +1,55 @@
+#include <iostream>
+using namespace std;
+
+int choiseColor(int N, int K, int now, int** dp, bool firstChoise) {
+	int ret = 0;
+	if ((N - now + 1) / 2 < K)
+		return 0;
+	if (K == 0) 
+		return 1;
+	if (now + 1 == N) {
+		if (K == 1 && firstChoise == false)
+			return 1;
+		return 0;
+	}
+	
+	//현재 선택하는 경우	
+	if (now + 2 <= N) {
+		if (dp[now + 2][K - 1] == -1) {
+			dp[now + 2][K - 1] = choiseColor(N, K - 1, now + 2, dp, firstChoise);
+		}
+		ret += dp[now + 2][K - 1];
+	}
+	//선택하지 않는 경우
+	if (now + 1 <= N) {
+		if (dp[now + 1][K] == -1)
+			dp[now + 1][K] = choiseColor(N, K, now + 1, dp, firstChoise);
+		ret += dp[now + 1][K];
+	}
+	if (ret >= 1000000003)
+		ret %= 1000000003;
+	return ret;
+}
+int main(void) {
+	int N, K;
+	cin >> N >> K;
+
+	int** dp = new int* [N + 1];
+	for (int i = 0; i <= N; i++)
+		dp[i] = new int[K + 1];
+	for (int i = 0; i <= N; i++)
+		for (int j = 0; j <= K; j++)
+			dp[i][j] = -1;
+	int rslt;
+	rslt = choiseColor(N, K, 1, dp, false);
+	for (int i = 0; i <= N; i++)
+		for (int j = 0; j <= K; j++)
+			dp[i][j] = -1;
+	rslt += choiseColor(N, K - 1, 2, dp, true);
+
+	cout << rslt % 1000000003;
+	
+	for (int i = 0; i <= N; i++)
+		delete[] dp[i];
+	delete[] dp;
+}
