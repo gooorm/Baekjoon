@@ -1,0 +1,148 @@
+#include <iostream>
+using namespace std;
+#define MAX_QUEUE_SIZE 1000
+
+
+typedef struct {
+	short r;
+	short c;
+} element;
+
+typedef struct QueueType{ // 큐 타입
+	element data;
+	QueueType* link;
+} QueueType;
+
+// 오류 함수
+void error(char* message)
+{
+	fprintf(stderr, "%s\n", message);
+	exit(1);
+}
+
+// 공백 상태 검출 함수
+QueueType* queue_init(QueueType* q, element data)
+{
+	q->data = data;
+	q->link = NULL;
+	return q;
+}
+
+// 공백 상태 검출 함수
+int is_emp(QueueType* q)
+{
+	if (q)
+		return 0;
+	else
+		return 1;
+}
+
+// 포화 상태 검출 함수
+int is_full(QueueType* q)
+{
+	return 0;
+}
+// 삽입 함수
+QueueType* enqueue(QueueType* q, element item)
+{
+	QueueType* newQueue, *temp = q;
+	newQueue = new QueueType;
+	newQueue->data = item;
+	newQueue->link = NULL;
+
+	if (!q) {
+		q = newQueue;
+		return q;
+	}
+	for (; temp->link; temp = temp->link) {
+
+	}
+	temp->link = newQueue;
+
+	return q;
+}
+
+// 삭제 함수
+element dequeue(QueueType* q)
+{
+	if (is_emp(q)) {
+		cout << "큐가 공백상태입니다";
+		exit(1);
+	}
+	return q->data;
+}
+
+int getMaxArea(int** pic, int n, int m, int i, int j) {
+	QueueType* q = new QueueType;
+	element temp;
+	int count = 0;
+	
+	temp.r = i;
+	temp.c = j;
+	q = queue_init(q, temp);
+	while (!is_emp(q)) {
+		temp = dequeue(q);   
+		if(q)
+			q = q->link;
+		if (pic[temp.r][temp.c] == 0)
+			continue;
+		pic[temp.r][temp.c] = 0;
+		count++;
+		if (temp.c - 1 >= 0 && pic[temp.r][temp.c - 1] == 1) {
+			temp.c--;
+			q = enqueue(q, temp);
+			temp.c++;
+		}
+		if (temp.c + 1 < m && pic[temp.r][temp.c + 1] == 1) {
+			temp.c++;
+			q = enqueue(q, temp);
+			temp.c--;
+		}
+		if (temp.r + 1 < n && pic[temp.r + 1][temp.c] == 1) {
+			temp.r++;
+			q = enqueue(q, temp);
+			temp.r--;
+		}if (temp.c - 1 >= 0 && pic[temp.r][temp.c - 1] == 1) {
+			temp.c--;
+			q = enqueue(q, temp);
+			temp.c++;
+		}
+		if (temp.c + 1 < m && pic[temp.r][temp.c + 1] == 1) {
+			temp.c++;
+			q = enqueue(q, temp);
+			temp.c--;
+		}
+		if (temp.r - 1 >= 0 && pic[temp.r - 1][temp.c] == 1) {
+			temp.r--;
+			q = enqueue(q, temp);
+			temp.r++;
+		}
+	}
+	return count;
+}
+int main(void) {
+	int n, m;
+	int** picture;
+	cin >> n >> m;
+	
+	picture = new int*[n];
+	for (int i = 0; i < n; i++)
+		picture[i] = new int[m];
+
+	for (int i = 0; i < n; i++) 
+		for (int j = 0; j < m; j++) 
+			cin >> picture[i][j];
+	
+	int max = 0, count = 0, temp;
+	
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++) 
+			if (picture[i][j] == 1) {
+				count++;
+				temp = getMaxArea(picture, n, m, i, j);
+				if (max < temp)
+					max = temp;
+			}		
+
+	cout << count << endl << max;
+}
