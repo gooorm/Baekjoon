@@ -1,0 +1,54 @@
+
+import java.util.Scanner;
+
+public class N12865 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int[][] value, dp;
+		int n, k;
+		n = sc.nextInt();
+		k = sc.nextInt();
+		value = new int[n][2];
+		dp = new int[n + 1][k + 1]; 		
+		
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < 2; j++) {
+				value[i][j] = sc.nextInt();
+			}
+		}
+		for(int i = 0; i <= n; i++) {
+			for(int j = 0; j <= k; j++) {
+				dp[i][j] = -1;
+			}
+		}
+		System.out.println(getMaxValue(value, dp, 0, n, k));
+
+		sc.close();
+	}
+	
+	public static int getMaxValue(int[][] value, int[][]dp, int num, int n, int remain) {
+		
+		if(num  == n - 1) {
+			if(remain >= value[num][0])
+				return value[num][1];
+			else
+				return 0;
+		}
+		if(dp[num + 1][remain] == -1) {
+			dp[num + 1][remain] = getMaxValue(value, dp, num + 1, n, remain);
+		}
+		if(remain >= value[num][0]) {
+			if(dp[num + 1][remain - value[num][0]] == -1) {
+				dp[num + 1][remain - value[num][0]] 
+						= getMaxValue(value, dp, num + 1, n, remain - value[num][0]);				
+			}
+			if(dp[num + 1][remain] <= dp[num + 1][remain - value[num][0]] + value[num][1]) {
+				return dp[num + 1][remain - value[num][0]] + value[num][1];
+			}
+		}
+
+		return dp[num + 1][remain];
+	}
+}
