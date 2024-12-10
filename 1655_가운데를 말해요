@@ -1,0 +1,112 @@
+#include <iostream>
+#include <vector>
+#define MAX_ELEMENT 50001
+using namespace std;
+typedef struct {
+	int key;
+}element;
+typedef struct HeapType {
+	element data[MAX_ELEMENT];
+	int n;
+}HeapType;
+void init(HeapType* t) {
+	t->n = 0;
+}
+void insert_maxHeap(HeapType* t, element data) {
+	int temp = ++(t->n);
+
+	while (temp != 1 && data.key > t->data[temp / 2].key) {
+		t->data[temp] = t->data[temp / 2];
+		temp /= 2;
+	}
+	t->data[temp] = data;
+}
+void insert_minHeap(HeapType* t, element data) {
+	int temp = ++(t->n);
+
+	while (temp != 1 && data.key < t->data[temp / 2].key) {
+		t->data[temp] = t->data[temp / 2];
+		temp /= 2;
+	}
+	t->data[temp] = data;
+}
+void max_rearrange(HeapType* t, element data) {
+	int temp = 2;
+
+	while (temp <= t->n) {
+		if (temp < t->n && t->data[temp].key < t->data[temp + 1].key)
+			temp++;
+		if (data.key < t->data[temp].key) 
+			t->data[temp / 2] = t->data[temp];		
+		else 
+			break;		
+		temp *= 2;
+	}
+	t->data[temp / 2] = data;
+}
+void min_rearrange(HeapType* t, element data) {
+	int temp = 2;
+
+	while (temp <= t->n) {
+		if (temp < t->n && t->data[temp].key > t->data[temp + 1].key)
+			temp++;
+		if (data.key > t->data[temp].key)
+			t->data[temp / 2] = t->data[temp];
+		else
+			break;
+		temp *= 2;
+	}
+	t->data[temp / 2] = data;
+}
+void display(HeapType* t) {
+
+	for (int i = 1; i <= t->n; i *= 2) {
+		for (int j = i; j <= t->n && j < i * 2; j++)
+			cout << t->data[j].key << " ";
+		cout << endl;
+	}
+	cout << "-----------------" << endl;
+
+}
+void module_tree(HeapType* t, int n) {
+	element data;
+	data.key = n;
+	insert_minHeap(t, data);
+	display(t);
+}
+int main(void) {
+	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+	HeapType* max = new HeapType;
+	HeapType* min = new HeapType;
+	int n;
+	element new_element;
+
+	init(max);
+	init(min);
+
+	cin >> n;
+	cin >> new_element.key;
+	insert_maxHeap(max, new_element);
+	cout << max->data[1].key << endl;
+
+	for (int i = 1; i < n; i++) {
+		cin >> new_element.key;
+		if (max->n == min->n) {
+			if (min->data[1].key < new_element.key) {
+				insert_maxHeap(max, min->data[1]);
+				min_rearrange(min, new_element);
+			}
+			else
+				insert_maxHeap(max, new_element);
+		}
+		else {
+			if (max->data[1].key > new_element.key) {
+				insert_minHeap(min, max->data[1]);
+				max_rearrange(max, new_element);
+			}
+			else
+				insert_minHeap(min, new_element);
+		}
+		cout << max->data[1].key << '\n';
+	}
+}
