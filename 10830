@@ -1,0 +1,62 @@
+import java.util.Scanner;
+
+public class N10830 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		
+		long[][] A;
+		long N, B;
+		
+		N = sc.nextLong();
+		B = sc.nextLong();
+		A = new long[(int)N][(int)N];
+	
+		for(int i = 0; i < N; i++)
+			for(int j = 0; j < N; j++)
+				A[i][j] = sc.nextLong();
+		
+		A = pow(A, N, B);
+		
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++)
+				System.out.print(A[i][j] + " ");
+			System.out.println();
+		}
+		sc.close();
+	}
+	
+	public static long[][] pow(long[][] A, long N, long expo) {
+		long[][] even = new long[(int)N][(int)N];
+		long[][] ret = new long[(int)N][(int)N];
+		long[][] odd = new long[(int)N][(int)N];
+		if(expo == 1) {
+			for(int i = 0; i < N; i++)
+				for(int j = 0; j < N; j++)
+					A[i][j] %= 1000;
+			return A;
+		}
+		even = pow(A, N, expo/2);
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				for(int k = 0; k < N; k++) {
+					ret[i][j] += even[i][k] * even[k][j];
+				}
+				ret[i][j] %= 1000;
+			}
+		}
+		if(expo % 2 == 0) {
+			return ret;
+		}
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < N; j++) {
+				for(int k = 0; k < N; k++) {
+					odd[i][j] += A[i][k] * ret[k][j];
+				}
+				odd[i][j] %= 1000;
+			}
+		}
+		return odd;
+	}
+}
