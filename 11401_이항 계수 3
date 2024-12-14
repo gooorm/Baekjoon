@@ -1,0 +1,40 @@
+import java.util.Scanner;
+public class N11401 {
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		long n, k, numer, denom;
+		final long p = 1000000007;
+		
+		n = sc.nextInt();
+		k = sc.nextInt();
+		
+		numer = factorial(n, p);
+		denom = factorial(k, p) * factorial(n - k, p) % p;
+		
+		System.out.println((numer * pow(denom, p - 2, p)) % p);
+		
+		sc.close();
+	}
+	public static long pow(long base, long expo, long p) {
+		long ret;
+		if(expo == 0)
+			return 1;
+		if(expo == 1)
+			return base;
+		
+		ret = pow(base, expo/2, p);
+		
+		if(expo % 2 == 0) {
+			return (ret * ret % p);
+		}
+		return (ret * ret % p) * base % p;		
+	}
+	public static long factorial(long n, long p) {
+		if(n == 0 || n == 1)
+			return 1;		
+		return (factorial(n - 1, p) * n) % p;
+	}
+
+}
