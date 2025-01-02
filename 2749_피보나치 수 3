@@ -1,0 +1,45 @@
+import java.util.Scanner;
+
+public class N2749 {
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		long num;
+		long[] dp;
+		
+		num = sc.nextLong();
+		num = (num + 1) % 1500000;
+		dp = new long[(int)num + 2];
+		for(int i = 0; i <= num + 1; i++) {
+			dp[i] = 0;
+		}
+		System.out.print(fibonacci(num, dp));
+		sc.close();
+	}
+	
+	public static long fibonacci(long num, long[] dp) {
+		long ret;
+		if(num == 1 || num == 2)
+			return num - 1;
+		if(num <= 4)
+			return fibonacci(num - 1, dp) + fibonacci(num - 2, dp);
+		if(num % 2 == 0) {
+			if(dp[(int)num/2] == 0)
+				dp[(int)num/2] = fibonacci(num / 2, dp);
+			if(dp[(int)num/2 + 1] == 0)
+				dp[(int)num/2 + 1] = fibonacci(num / 2 + 1, dp);
+			return (dp[(int)num/2] * dp[(int)num/2] + 
+					dp[(int)num/2 + 1] * dp[(int)num/2 + 1]) % 1000000;
+		}
+		else {
+			if(dp[(int)num - 1] == 0)
+				dp[(int)num - 1] = fibonacci(num - 1, dp);
+			if(dp[(int)num + 1] == 0)
+				dp[(int)num + 1] = fibonacci(num + 1, dp);
+			ret = (dp[(int)num + 1] - dp[(int)num - 1]) % 1000000;
+			if(ret < 0)
+				return ret + 1000000;
+			return ret;
+		}
+	}
+}
