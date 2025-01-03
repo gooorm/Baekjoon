@@ -1,0 +1,132 @@
+/*코드 아직 완성 못 함........ https://chagaun-omija.tistory.com/261 적극 참고*/
+
+import java.util.Scanner;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.ArrayList;
+public class N2933 {	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int R, C, N, h;
+		char[][] map;
+		R = sc.nextInt();
+		C = sc.nextInt();
+		map = new char[R][C];
+		for(int i = 0; i < R; i++) {
+			String line = sc.next();
+			for(int j = 0; j < C; j++) 		
+				map[i][j] = line.charAt(j);
+		}
+		findCluster(map);
+		
+		N = sc.nextInt();
+		
+		for(int i = 0; i < N; i++) {
+			h = map.length - sc.nextInt();
+			if(i % 2 == 0) {
+				for(int j = 0; j < map[0].length; j++) 
+					if(map[h][j] == 'x') {
+						map[h][j] = '.';
+						break;
+					}				
+			}
+			else {
+				for(int j = map[0].length - 1; j >= 0; j--) 
+					if(map[h][j] == 'x') {
+						map[h][j] = '.';
+						break;
+					}				
+			}
+			for(int k = 0; k < map.length; k++) {
+				for(int j = 0; j < map[0].length; j++)
+					System.out.print(map[k][j]);
+				System.out.println();
+			}
+			System.out.println("-----------------");
+			findCluster(map);
+		}
+		
+		for(int i = 0; i < map.length; i++) {
+			for(int j = 0; j < map[0].length; j++)
+				System.out.print(map[i][j]);
+			System.out.println();
+		}
+		sc.close();
+	}
+	public static boolean findCluster(char[][] map) {
+		boolean ret = false;
+		ArrayList<Pair<Integer, Integer>> cluster = new ArrayList<>();
+		
+		char[][] ground = new char[map.length][map[0].length];
+		for(int i = 0; i < map.length; i++)
+			for(int j = 0; j < map[0].length; j++) {
+				ground[i][j] = '.';
+			}
+		BFS(map, ground);
+		for(int i = 0; i < map.length; i++)
+			for(int j = 0; j < map[0].length; j++) {
+				if(map[i][j] =='x' && ground[i][j] == '.') {
+					cluster.add(new Pair<>(i, j));
+					ret = true;
+				}
+			}		
+		if(ret)
+			dropCluster(map, cluster, getHeight(map, cluster));
+		return ret;
+	}
+	public static int getHeight(char[][]map, ArrayList<Pair<Integer, Integer>> cluster) {
+		int min = 100;
+		for(int i = 0; i < cluster.size(); i++) {
+			int h = 0;
+			int x = cluster.get(i).getX();
+			int y = cluster.get(i).getY();
+			for(int j = x + 1; j < map.length; j++) {
+				if(map[j][y] =='x')
+					break;
+				h++;
+			}
+			if(min > h)
+				min = h;
+		}
+		return min;
+		
+	}
+	public static void BFS(char[][] map, char[][] ground) {
+		Queue<Pair<Integer, Integer>> q = new LinkedList<>();
+		int[] dx = {-1, 1, 0, 0};
+		int[] dy = {0, 0, -1, 1};		
+		
+		for(int i = 0; i < map[0].length; i++) {
+			
+			if(map[map.length - 1][i] == 'x' && ground[map.length - 1][i] == '.') {
+				q.add(new Pair<>(map.length - 1, i));
+				while(!q.isEmpty()) {
+					Pair<Integer, Integer> p = q.poll();
+					ground[p.getX()][p.getY()] = 'x';
+					for(int j = 0; j < 4 ; j++) {
+						int x = (int)p.getX() + dx[j];
+						int y = (int)p.getY() + dy[j];
+						
+						if(x < 0 || x >= map.length) continue;
+						if(y < 0 || y >= map[0].length) continue;
+						if(map[x][y] == '.') continue;
+						if(ground[x][y] == 'x') continue;
+						q.add(new Pair<>(x, y));
+					}		
+				}
+			}						
+		}
+	}
+	public static void dropCluster(char[][] map, ArrayList<Pair<Integer, Integer>> cluster, int h) {
+		for(int i = 0; i < cluster.size(); i++) {
+			int x = cluster.get(i).getX();
+			int y = cluster.get(i).getY();
+			map[x + h][y] = map[x][y];
+			if(x >= h)
+				map[x][y] = map[x - h][y];
+			else
+				map[x][y] = '.';
+		}
+	}
+}
