@@ -1,5 +1,4 @@
-/*코드 아직 완성 못 함........ https://chagaun-omija.tistory.com/261 적극 참고*/
-
+/*백준에서 Pair 컴파일 오류가 뜹니다.........*/
 import java.util.Scanner;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -38,13 +37,8 @@ public class N2933 {
 						break;
 					}				
 			}
-			for(int k = 0; k < map.length; k++) {
-				for(int j = 0; j < map[0].length; j++)
-					System.out.print(map[k][j]);
-				System.out.println();
-			}
-			System.out.println("-----------------");
-			findCluster(map);
+			
+			map = findCluster(map);
 		}
 		
 		for(int i = 0; i < map.length; i++) {
@@ -54,7 +48,7 @@ public class N2933 {
 		}
 		sc.close();
 	}
-	public static boolean findCluster(char[][] map) {
+	public static char[][] findCluster(char[][] map) {
 		boolean ret = false;
 		ArrayList<Pair<Integer, Integer>> cluster = new ArrayList<>();
 		
@@ -71,18 +65,20 @@ public class N2933 {
 					ret = true;
 				}
 			}		
-		if(ret)
-			dropCluster(map, cluster, getHeight(map, cluster));
-		return ret;
+		if(ret) {
+			int height =  getHeight(map, cluster, ground);
+			dropCluster(ground, cluster, height);
+		}
+		return ground;
 	}
-	public static int getHeight(char[][]map, ArrayList<Pair<Integer, Integer>> cluster) {
+	public static int getHeight(char[][]map, ArrayList<Pair<Integer, Integer>> cluster, char[][] ground) {
 		int min = 100;
 		for(int i = 0; i < cluster.size(); i++) {
 			int h = 0;
 			int x = cluster.get(i).getX();
 			int y = cluster.get(i).getY();
 			for(int j = x + 1; j < map.length; j++) {
-				if(map[j][y] =='x')
+				if(map[j][y] =='x' && ground[j][y] != '.')
 					break;
 				h++;
 			}
@@ -122,11 +118,7 @@ public class N2933 {
 		for(int i = 0; i < cluster.size(); i++) {
 			int x = cluster.get(i).getX();
 			int y = cluster.get(i).getY();
-			map[x + h][y] = map[x][y];
-			if(x >= h)
-				map[x][y] = map[x - h][y];
-			else
-				map[x][y] = '.';
+			map[x + h][y] = 'x';			
 		}
 	}
 }
