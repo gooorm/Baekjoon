@@ -1,4 +1,5 @@
-/*메모리 초과가ㅋㅋ 뜹니다.............*/
+/*BFS 메모리 중복삽입 해결했더니 풀렸음......*/
+
 import java.util.Scanner;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -121,6 +122,7 @@ public class N2933 {
 						if(y < 0 || y >= map[0].length) continue;
 						if(map[x][y] == '.') continue;
 						if(ground[x][y] == 'x') continue;
+						ground[x][y] = 'x';
 						q.add(new Coo(x, y));
 					}		
 				}
@@ -132,9 +134,9 @@ public class N2933 {
 		for(int i = 0; i < map.length; i++)
 			for(int j = 0; j < map[0].length; j++)
 				map[i][j] = ground[i][j];
-		for(int i = 0; i < cluster.size(); i++) {
-			int x = cluster.get(i).getX();
-			int y = cluster.get(i).getY();
+		for(Coo i: cluster) {
+			int x = i.getX();
+			int y = i.getY();
 			map[x + h][y] = 'x';			
 		}
 	}
