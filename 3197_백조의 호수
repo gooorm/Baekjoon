@@ -1,0 +1,135 @@
+/*45퍼에서 틀림*/
+
+import java.util.Scanner;
+import java.util.Queue;
+import java.util.LinkedList;
+class Pair<T, K>{
+	T x;
+	K y;
+	
+	Pair(T x, K y){
+		this.x = x;
+		this.y = y;
+	}
+	T getX() {
+		return x;
+	}
+	K getY() {
+		return y;
+	}
+}
+public class N3197 {
+	static int[] dx = {-1, 1, 0, 0};
+	static int[] dy = {0, 0, -1, 1};
+	static char[][] map;
+	static char[][] visited;
+	static Queue<Pair<Integer, Integer>> adjSwan = new LinkedList<Pair<Integer, Integer>>();
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+        
+		Queue<Pair<Integer, Integer>> water = new LinkedList<Pair<Integer, Integer>>();
+		LinkedList<Pair<Integer, Integer>> swan = new LinkedList<Pair<Integer, Integer>>();
+		int R, C;	
+		int count = 0;
+		String input;
+		R = sc.nextInt();
+		C = sc.nextInt();
+		map = new char[R][C];
+		visited = new char[R][C];
+		
+		for(int i = 0; i < map.length; i++) {
+			input = sc.next();
+			for(int j = 0; j < map[0].length; j++) {
+				map[i][j] = input.charAt(j);
+				if(map[i][j] == 'L')
+					swan.offer(new Pair<>(i, j));
+				else if(map[i][j]=='.')
+					water.offer(new Pair<>(i, j));
+			}
+		}				
+		 
+		while(!isMeet(map, swan)) {
+			water = melting(map, water);
+			count++;
+		}
+		System.out.print(count);
+		sc.close();
+		
+	}
+	public static Queue<Pair<Integer, Integer>> melting(char[][] map, Queue<Pair<Integer, Integer>> water) {
+		Queue<Pair<Integer, Integer>> newWater = new LinkedList<Pair<Integer, Integer>>();
+		
+		while(!water.isEmpty()) {
+			Pair<Integer, Integer> melt = water.poll(); 
+			
+			for(int i = 0; i < 4; i++) {
+				int x = (int)(melt.getX()) + dx[i];
+				int y = (int)(melt.getY()) + dy[i];			
+				if(x < 0 || x >= map.length) continue;	
+				if(y < 0 || y >= map[0].length) continue;
+				if(map[x][y] !='X') continue;
+				newWater.add(new Pair<>(x, y));
+				map[x][y] = '.';
+				for(int j = 0; j < 4; j++) {
+					int nx = x + dx[j];
+					int ny = y + dy[j];
+					if(nx < 0 || nx >= map.length) continue;
+					if(ny < 0 || ny >= map[0].length) continue;	
+					if(map[nx][ny]==',') {
+						adjSwan.add(new Pair<>(nx, ny));
+						break;
+					}
+				}
+			}			
+		}		
+		water = null;
+		return newWater;
+	}
+	public static boolean isMeet(char[][] map, LinkedList<Pair<Integer, Integer>> swan) {
+		Queue<Pair<Integer, Integer>> visited = new LinkedList<Pair<Integer, Integer>>();
+		
+		if(adjSwan.isEmpty()) {
+			visited.offer(swan.get(0));
+			
+			while(!visited.isEmpty()) {
+				Pair<Integer, Integer> now = visited.poll();
+				for(int i = 0; i < 4; i++) {
+					int x = now.getX() + dx[i];
+					int y = now.getY() + dy[i];				
+					if(x < 0 || x >= map.length) continue;
+					if(y < 0 || y >= map[0].length) continue;				
+					if(map[x][y] == ',' || map[x][y] == 'X') continue;
+					if(x == swan.get(1).getX() && y == swan.get(1).getY()) {
+						return true;
+					}
+					map[x][y] = ',';
+					visited.offer(new Pair<>(x, y));
+				}
+			}
+		}
+		else {
+			while(!adjSwan.isEmpty()) {
+				visited.offer(adjSwan.poll());
+				
+				while(!visited.isEmpty()) {
+					Pair<Integer, Integer> now = visited.poll();					
+					for(int i = 0; i < 4; i++) {
+						int x = now.getX() + dx[i];
+						int y = now.getY() + dy[i];				
+						if(x < 0 || x >= map.length) continue;
+						if(y < 0 || y >= map[0].length) continue;				
+						if(map[x][y] == ',' || map[x][y] == 'X') continue;
+						if(x == swan.get(1).getX() && y == swan.get(1).getY()) {
+							return true;				
+						}
+						map[x][y] = ',';
+						visited.offer(new Pair<>(x, y));
+						
+					}
+				}
+			}
+		}
+		return false;
+	}
+}
