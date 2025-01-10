@@ -1,5 +1,4 @@
-틀렸단다
-11퍼에서 . . .
+11퍼 틀림 
 
 import java.util.Scanner;
 import java.util.Queue;
@@ -67,13 +66,13 @@ public class N9376 {
 		for(int i = 0; i < 4; i++) {
 			int x = cloc[0].getX() + dx[i];
 			int y = cloc[0].getY() + dy[i];
+			Pir newElement = new Pir(x, y);
 			if(x < 0 || x >= map.length || y < 0 || y >= map[0].length) continue;
 			if(map[x][y] == '*') continue;
-			q.add(new Pir(x, y));
-			q.peek().setDirection(i);
+			newElement.setDirection(i);
+			q.add(newElement);			
 			dp[x][y] = 0;	
 		}				
-		
 		shootLaser();
 		/*
 		for(int i = 0; i < map.length; i++) {
@@ -91,15 +90,14 @@ public class N9376 {
 		while(!q.isEmpty()) {
 			Pir p = q.poll();			
 			for(int i = 0; i < 4; i++) {
+				boolean isNew = false;
 				int x = p.getX() + dx[i];
 				int y = p.getY() + dy[i];
-
+				Pir newElement = new Pir(x, y);
 				if(x < 0 || x >= map.length || y < 0 || y >=map[0].length) continue;
-				if(map[x][y] == '*') continue;
-				
+				if(map[x][y] == '*') continue;				
 
-				for(Integer j : p.getDirection()) {		
-					Pir newElement = new Pir(x, y);
+				for(Integer j : p.getDirection()) {						
 					if(j == i) { // 같은 방향
 						if(dp[x][y] > dp[p.getX()][p.getY()]) {
 							dp[x][y] = dp[p.getX()][p.getY()];	
@@ -107,8 +105,8 @@ public class N9376 {
 						else {
 							continue;
 						}
-						newElement.setDirection(i);
-						q.add(newElement);					
+						isNew = true;
+						newElement.setDirection(i);				
 					}
 					else if((j + i) % 2 == 0) {//반대방향
 						continue;
@@ -120,10 +118,13 @@ public class N9376 {
 						else {
 							continue;
 						}
-						newElement.setDirection(i);
-						q.add(newElement);
+						isNew = true;
+						newElement.setDirection(i);						
 					}
 				}				
+				if(isNew) {
+					q.add(newElement);
+				}
 				if(x == cloc[1].getX() && y == cloc[1].getY()) return;
 			}
 		}			
