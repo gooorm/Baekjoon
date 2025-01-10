@@ -1,0 +1,131 @@
+틀렸단다
+11퍼에서 . . .
+
+import java.util.Scanner;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.ArrayList;
+class Pir{
+	private int x;
+	private int y;
+	ArrayList<Integer> direction;
+	public Pir() {
+		x = 0;
+		y = 0;
+	}
+	public Pir(int x, int y) {
+		this.x = x;
+		this.y = y;
+		direction = new ArrayList<Integer>();
+	}
+	public void setDirection(int direction) {
+		this.direction.add(direction);
+	}
+	public int getX() {
+		return x;
+	}
+	public int getY() {
+		return y;
+	}
+	public ArrayList<Integer> getDirection() {
+		return direction;
+	}
+	
+}
+public class N9376 {
+	
+		static int max;
+		static char[][] map;
+		static int[][] dp;
+		static Pir[] cloc;
+		static int[] dx = {0, 1, 0, -1};
+		static int[] dy = {1, 0, -1, 0};
+		static Queue<Pir> q = new LinkedList<>();
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int W, H, count = 0;
+		
+		cloc = new Pir[2];
+		W = sc.nextInt();
+		H = sc.nextInt();
+		map = new char[H][W];
+		max = W * H;
+		dp = new int[H][W];
+		for(int i = 0; i < H; i++) {
+			String line = sc.next();
+			for(int j = 0; j < W; j++) {
+				map[i][j] = line.charAt(j);
+				if(map[i][j] == 'C')
+					cloc[count++] = new Pir(i, j);
+			}
+		}
+		for(int i = 0; i < map.length; i++)
+			for(int j = 0; j < map[0].length; j++)
+				dp[i][j] = max; // 최대값
+		
+		for(int i = 0; i < 4; i++) {
+			int x = cloc[0].getX() + dx[i];
+			int y = cloc[0].getY() + dy[i];
+			if(x < 0 || x >= map.length || y < 0 || y >= map[0].length) continue;
+			if(map[x][y] == '*') continue;
+			q.add(new Pir(x, y));
+			q.peek().setDirection(i);
+			dp[x][y] = 0;	
+		}				
+		
+		shootLaser();
+		/*
+		for(int i = 0; i < map.length; i++) {
+			for(int j = 0; j < map[0].length; j++)
+				System.out.print(dp[i][j] + "\t");
+			System.out.println();
+		}*/
+		System.out.print(dp[cloc[1].getX()][cloc[1].getY()]);
+
+		sc.close();
+
+	}
+	public static void shootLaser() {
+
+		while(!q.isEmpty()) {
+			Pir p = q.poll();			
+			for(int i = 0; i < 4; i++) {
+				int x = p.getX() + dx[i];
+				int y = p.getY() + dy[i];
+
+				if(x < 0 || x >= map.length || y < 0 || y >=map[0].length) continue;
+				if(map[x][y] == '*') continue;
+				
+
+				for(Integer j : p.getDirection()) {		
+					Pir newElement = new Pir(x, y);
+					if(j == i) { // 같은 방향
+						if(dp[x][y] > dp[p.getX()][p.getY()]) {
+							dp[x][y] = dp[p.getX()][p.getY()];	
+						}
+						else {
+							continue;
+						}
+						newElement.setDirection(i);
+						q.add(newElement);					
+					}
+					else if((j + i) % 2 == 0) {//반대방향
+						continue;
+					}
+					else { // 거울 사용
+						if(dp[x][y] > dp[p.getX()][p.getY()] + 1) {
+							dp[x][y] = dp[p.getX()][p.getY()] + 1;
+						} 
+						else {
+							continue;
+						}
+						newElement.setDirection(i);
+						q.add(newElement);
+					}
+				}				
+				if(x == cloc[1].getX() && y == cloc[1].getY()) return;
+			}
+		}			
+	}
+}
