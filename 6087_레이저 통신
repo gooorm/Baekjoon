@@ -1,24 +1,22 @@
-11퍼 틀림 
+끝에서 메모리초과 뜸
 
 import java.util.Scanner;
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.ArrayList;
 class Pir{
 	private int x;
 	private int y;
-	ArrayList<Integer> direction;
+	private int direction;
+	private int mirror;
 	public Pir() {
 		x = 0;
 		y = 0;
 	}
-	public Pir(int x, int y) {
+	public Pir(int x, int y, int direction, int mirror) {
 		this.x = x;
 		this.y = y;
-		direction = new ArrayList<Integer>();
-	}
-	public void setDirection(int direction) {
-		this.direction.add(direction);
+		this.direction = direction;
+		this.mirror = mirror;
 	}
 	public int getX() {
 		return x;
@@ -26,10 +24,12 @@ class Pir{
 	public int getY() {
 		return y;
 	}
-	public ArrayList<Integer> getDirection() {
+	public int getDirection() {
 		return direction;
 	}
-	
+	public int getMirror() {
+		return mirror;
+	}
 }
 public class N9376 {
 	
@@ -41,7 +41,6 @@ public class N9376 {
 		static int[] dy = {1, 0, -1, 0};
 		static Queue<Pir> q = new LinkedList<>();
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Scanner sc = new Scanner(System.in);
 		int W, H, count = 0;
 		
@@ -56,7 +55,7 @@ public class N9376 {
 			for(int j = 0; j < W; j++) {
 				map[i][j] = line.charAt(j);
 				if(map[i][j] == 'C')
-					cloc[count++] = new Pir(i, j);
+					cloc[count++] = new Pir(i, j, -1, -1);
 			}
 		}
 		for(int i = 0; i < map.length; i++)
@@ -66,14 +65,13 @@ public class N9376 {
 		for(int i = 0; i < 4; i++) {
 			int x = cloc[0].getX() + dx[i];
 			int y = cloc[0].getY() + dy[i];
-			Pir newElement = new Pir(x, y);
 			if(x < 0 || x >= map.length || y < 0 || y >= map[0].length) continue;
 			if(map[x][y] == '*') continue;
-			newElement.setDirection(i);
-			q.add(newElement);			
+			q.add(new Pir(x, y, i, 0));			
 			dp[x][y] = 0;	
 		}				
 		shootLaser();
+		
 		/*
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[0].length; j++)
@@ -90,42 +88,32 @@ public class N9376 {
 		while(!q.isEmpty()) {
 			Pir p = q.poll();			
 			for(int i = 0; i < 4; i++) {
-				boolean isNew = false;
 				int x = p.getX() + dx[i];
 				int y = p.getY() + dy[i];
-				Pir newElement = new Pir(x, y);
+				//System.out.println("(" + x + ", " + y + ")");
 				if(x < 0 || x >= map.length || y < 0 || y >=map[0].length) continue;
-				if(map[x][y] == '*') continue;				
+				if(map[x][y] == '*' || p.getMirror() > dp[p.getX()][p.getY()]) continue;				
 
-				for(Integer j : p.getDirection()) {						
-					if(j == i) { // 같은 방향
-						if(dp[x][y] > dp[p.getX()][p.getY()]) {
-							dp[x][y] = dp[p.getX()][p.getY()];	
-						}
-						else {
-							continue;
-						}
-						isNew = true;
-						newElement.setDirection(i);				
+									
+				if(p.getDirection() == i) { // 같은 방향
+					if(dp[x][y] >= dp[p.getX()][p.getY()]) {
+						dp[x][y] = dp[p.getX()][p.getY()];				
+						q.add(new Pir(x, y, i, dp[x][y] = dp[p.getX()][p.getY()]));
 					}
-					else if((j + i) % 2 == 0) {//반대방향
-						continue;
-					}
-					else { // 거울 사용
-						if(dp[x][y] > dp[p.getX()][p.getY()] + 1) {
-							dp[x][y] = dp[p.getX()][p.getY()] + 1;
-						} 
-						else {
-							continue;
-						}
-						isNew = true;
-						newElement.setDirection(i);						
-					}
-				}				
-				if(isNew) {
-					q.add(newElement);
+					else 
+						continue;									
 				}
-				if(x == cloc[1].getX() && y == cloc[1].getY()) return;
+				else if((p.getDirection() + i) % 2 == 0) {//반대방향
+					continue;
+				}
+				else { // 거울 사용
+					if(dp[x][y] >= dp[p.getX()][p.getY()] + 1) {
+						dp[x][y] = dp[p.getX()][p.getY()] + 1;	
+						q.add(new Pir(x, y, i, dp[x][y] = dp[p.getX()][p.getY()] + 1));	
+					}
+					else 
+						continue;
+				}				
 			}
 		}			
 	}
