@@ -1,44 +1,41 @@
-끝에서 메모리초과 뜸
-
 import java.util.Scanner;
 import java.util.Queue;
 import java.util.LinkedList;
 class Pir{
-	private int x;
-	private int y;
-	private int direction;
+	private byte x;
+	private byte y;
+	private byte direction;
 	private int mirror;
 	public Pir() {
 		x = 0;
 		y = 0;
 	}
-	public Pir(int x, int y, int direction, int mirror) {
+	public Pir(byte x, byte y, byte direction, int mirror) {
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
 		this.mirror = mirror;
 	}
-	public int getX() {
+	public byte getX() {
 		return x;
 	}
-	public int getY() {
+	public byte getY() {
 		return y;
 	}
-	public int getDirection() {
+	public byte getDirection() {
 		return direction;
 	}
 	public int getMirror() {
 		return mirror;
 	}
 }
-public class N9376 {
-	
+public class N9376 {	
 		static int max;
 		static char[][] map;
 		static int[][] dp;
 		static Pir[] cloc;
-		static int[] dx = {0, 1, 0, -1};
-		static int[] dy = {1, 0, -1, 0};
+		static byte[] dx = {0, 1, 0, -1};
+		static byte[] dy = {1, 0, -1, 0};
 		static Queue<Pir> q = new LinkedList<>();
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
@@ -50,52 +47,52 @@ public class N9376 {
 		map = new char[H][W];
 		max = W * H;
 		dp = new int[H][W];
-		for(int i = 0; i < H; i++) {
+		for(byte i = 0; i < H; i++) {
 			String line = sc.next();
-			for(int j = 0; j < W; j++) {
+			for(byte j = 0; j < W; j++) {
 				map[i][j] = line.charAt(j);
 				if(map[i][j] == 'C')
-					cloc[count++] = new Pir(i, j, -1, -1);
+					cloc[count++] = new Pir(i, j, i, -1);
 			}
 		}
 		for(int i = 0; i < map.length; i++)
 			for(int j = 0; j < map[0].length; j++)
 				dp[i][j] = max; // 최대값
 		
-		for(int i = 0; i < 4; i++) {
-			int x = cloc[0].getX() + dx[i];
-			int y = cloc[0].getY() + dy[i];
+		for(byte i = 0; i < 4; i++) {
+			byte x = (byte)(cloc[0].getX() + dx[i]);
+			byte y = (byte)(cloc[0].getY() + dy[i]);
 			if(x < 0 || x >= map.length || y < 0 || y >= map[0].length) continue;
 			if(map[x][y] == '*') continue;
 			q.add(new Pir(x, y, i, 0));			
 			dp[x][y] = 0;	
 		}				
 		shootLaser();
-		
-		/*
-		for(int i = 0; i < map.length; i++) {
-			for(int j = 0; j < map[0].length; j++)
-				System.out.print(dp[i][j] + "\t");
-			System.out.println();
-		}*/
+
 		System.out.print(dp[cloc[1].getX()][cloc[1].getY()]);
 
 		sc.close();
 
 	}
 	public static void shootLaser() {
-
 		while(!q.isEmpty()) {
 			Pir p = q.poll();			
-			for(int i = 0; i < 4; i++) {
-				int x = p.getX() + dx[i];
-				int y = p.getY() + dy[i];
-				//System.out.println("(" + x + ", " + y + ")");
+			for(byte i = 0; i < 4; i++) {
+				byte x = (byte)(p.getX() + dx[i]);
+				byte y = (byte)(p.getY() + dy[i]);
+				
 				if(x < 0 || x >= map.length || y < 0 || y >=map[0].length) continue;
 				if(map[x][y] == '*' || p.getMirror() > dp[p.getX()][p.getY()]) continue;				
-
-									
+				if(dp[x][y]!=max) {					
+					byte tx = (byte)(x + dx[i]);
+					byte ty = (byte)(y + dy[i]);
+					if(!(tx < 0 || tx >= map.length || ty < 0 || ty >=map[0].length)) {
+						if(dp[p.getX()][p.getY()] == dp[tx][ty])
+							continue;
+					}					
+				}
 				if(p.getDirection() == i) { // 같은 방향
+					
 					if(dp[x][y] >= dp[p.getX()][p.getY()]) {
 						dp[x][y] = dp[p.getX()][p.getY()];				
 						q.add(new Pir(x, y, i, dp[x][y] = dp[p.getX()][p.getY()]));
