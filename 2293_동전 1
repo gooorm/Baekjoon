@@ -1,0 +1,31 @@
+import java.util.Scanner;
+public class N2293 {
+	static long[] dp;
+	static int[] coins;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		 Scanner sc = new Scanner(System.in);
+		 int n, k;
+		 n = sc.nextInt();
+		 k = sc.nextInt();
+		 coins = new int[n];
+		 dp = new long[k + 1];
+		 for(int i = 0; i < n; i++) {
+			 coins[i] = sc.nextInt();
+		 }
+		 for(int i = 0; i < n; i++)
+				 dp[i] = 0;
+		 System.out.println(getNum(k));
+		 sc.close();
+	}
+	public static long getNum(int k) {
+		dp[0] = 1;
+		
+		for(int coin: coins) {
+			for(int i = coin; i <= k; i++) {
+				dp[i] += dp[i - coin];
+			}
+		}		
+		return dp[k];
+	}
+}
