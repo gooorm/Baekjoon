@@ -1,0 +1,39 @@
+https://dhelloper.tistory.com/112 적극 참고
+
+*******************************************************************
+
+import java.util.Scanner;
+
+public class N11066 {
+	static int max = 1000000000;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int T, K;
+		
+		T = sc.nextInt();
+		
+		for(int t = 0; t < T; t++) {
+			K = sc.nextInt();			
+			int[] arr = new int[K + 1];
+			int[][] dp = new int[K + 1][K + 1];
+			int[] sum = new int[K + 1];
+			for(int i = 1; i <= K; i++)
+				arr[i] = sc.nextInt();
+			for(int i = 1; i <= K; i++) {
+				sum[i] = arr[i] + sum[i - 1];
+			}	
+			getMinFile(arr, dp, sum, K);
+		}
+		sc.close();
+	}
+	public static void getMinFile(int[] arr, int[][] dp, int[] sum, int K) {
+		for(int i =1; i <= K; i++)
+			for(int j = 1; j + i <= K; j++) {
+				dp[j][i + j] = max;
+				for(int k = j; k < i + j; k++)
+					dp[j][i + j] = Math.min(dp[j][i + j], dp[j][k] + dp[k + 1][i + j] + sum[i + j] - sum[j - 1]);	
+			}
+		System.out.println(dp[1][K]);
+	}
+}
