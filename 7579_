@@ -1,0 +1,51 @@
+메모리초과(넵)
+
+import java.util.Scanner;
+
+public class N7579 {
+		static int[] marray;
+		static short[] carray;
+		static short[][] dp;
+		static short max = 20000;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int N, M;
+		
+		N = sc.nextInt();
+		M = sc.nextInt();
+		
+		marray = new int[N];
+		carray = new short[N];
+		dp = new short[N + 1][M + 1];
+		
+		for(int i = 0; i < N; i++)
+			marray[i] = sc.nextInt();
+		for(int i = 0; i < N; i++)
+			carray[i] = sc.nextShort();
+		
+		for(int i = 0; i <= N; i++)
+			for(int j = 0; j <= M; j++)
+				dp[i][j] = max;
+		System.out.println(shutdown(0, M));
+		sc.close();
+	}
+	public static short shutdown(int n, int remain) {
+
+		if(n >= marray.length)
+			return max;
+		if(remain <= 0)
+			return 0;
+		
+		if(dp[n + 1][remain] == max) // 종료시키지 않는 경우;
+			dp[n + 1][remain] = shutdown(n + 1, remain);
+		
+		if(remain - marray[n] < 0) // 종료시키는 경우;
+			return (short)Math.min(dp[n + 1][remain], carray[n]);
+		
+		if(dp[n + 1][remain - marray[n]] == max)
+			dp[n + 1][remain - marray[n]] = shutdown(n + 1, remain - marray[n]);
+		
+		return (short)Math.min(dp[n + 1][remain], dp[n + 1][remain - marray[n]] + carray[n]);
+	}
+}
